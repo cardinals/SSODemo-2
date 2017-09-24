@@ -15,7 +15,7 @@
         $.get('http://mas.cn/Logout.aspx', function () { }, {}, 'jsonp');
         $.get('http://mas.cc/Logout.aspx', function () { }, {}, 'jsonp');
 
-        setTimeout(function () { location.href = "login.aspx"; }, 0);
+        setTimeout(function () { location.href = document.referrer; }, 0);
     </script>
 </body>
 </html>

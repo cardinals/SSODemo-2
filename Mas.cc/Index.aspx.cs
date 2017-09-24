@@ -12,9 +12,11 @@ namespace Mas.cc
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            //不存在局部会话
             if (Session["username"] == null)
             {
                 string token = Request.QueryString["t"];
+                //是否存在令牌
                 if (!string.IsNullOrEmpty(token))
                 {
 
@@ -25,17 +27,27 @@ namespace Mas.cc
                     //取出令牌的值
                     string tokenValue = db.StringGet(token);
 
-                    Session["username"] = tokenValue;
-
-                    //把令牌存入session
-                    Session["token"] = token;
-
                     //如果令牌过期或无效，去登录
                     if (string.IsNullOrEmpty(tokenValue))
                     {
                         //Response.Redirect("http://Passport.com/Login.aspx");
                         LoginPage();
                     }
+                    else
+                    {
+
+                        Session["username"] = tokenValue;
+
+                        //把令牌存入session
+                        Session["token"] = token;
+
+                        //用过就删除掉
+                        db.KeyDelete(token);
+
+                        Response.Redirect("index.aspx");
+                    }
+
+
                 }
                 else
                 {

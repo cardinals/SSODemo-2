@@ -14,9 +14,10 @@
             <h1>SSO统一登录中心</h1>
             用户名：<asp:TextBox ID="txtName" runat="server"></asp:TextBox>
             <br />
-            密&nbsp;&nbsp;&nbsp;码：<asp:TextBox ID="txPwd" TextMode="Password" runat="server"></asp:TextBox>
+            密&nbsp;&nbsp;&nbsp;码：<asp:TextBox ID="txtPwd" TextMode="Password" runat="server"></asp:TextBox>
             <br />
             <br />
+            <asp:HiddenField runat="server"  ID="txtSite"/>
             <asp:Button ID="Button1" runat="server" Text="登录" OnClick="Button1_Click" />
         </div>
     </form>

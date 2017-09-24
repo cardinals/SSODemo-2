@@ -19,18 +19,30 @@ namespace Passport.com
                 {
                     if (Request.Url.Host != Request.UrlReferrer.Host)
                     {
-                        Session["referrer"] = Request.UrlReferrer.Scheme + "://" + Request.UrlReferrer.Authority;
+                        string website = Request.UrlReferrer.Scheme + "://" + Request.UrlReferrer.Authority;
+                        //如果会话有效
+                        if (Session["username"] != null)
+                        {
+                            string token = Guid.NewGuid().ToString();
+                            string username = Session["username"] as string;
+
+                            ConnectionMultiplexer RedisClient = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+
+                            IDatabase db = RedisClient.GetDatabase();
+
+                            //注册令牌到Redis  一分钟失效
+                            db.StringSet(token, username, TimeSpan.FromMinutes(1));
+                            //返回到原来的系统
+                            Response.Redirect(website + "?t=" + token);
+                        }
+                        else
+                        {
+                            txtSite.Value = website;
+                        }
                     }
                 }
 
-                //如果会话有效
-                if (Session["token"] != null)
-                {
-                    string website = Session["referrer"] as string;
-                    string token = Session["token"] as string;
-                    //返回到原来的系统
-                    Response.Redirect(website + "?t=" + token);
-                }
+
 
             }
 
@@ -39,7 +51,7 @@ namespace Passport.com
         protected void Button1_Click(object sender, EventArgs e)
         {
             string username = txtName.Text.Trim();
-            string pwd = txPwd.Text.Trim();
+            string pwd = txtPwd.Text.Trim();
             if (username == "admin" && pwd == "admin")
             {
                 //生成令牌
@@ -52,10 +64,10 @@ namespace Passport.com
                 //注册令牌到Redis  一分钟失效
                 db.StringSet(token, username, TimeSpan.FromMinutes(1));
 
-                string website = Session["referrer"] as string;
+                string website = txtSite.Value;
 
                 //保存全局会话
-                Session["token"] = token;
+                Session["username"] = username;
 
                 //把令牌带到原来的系统
                 Response.Redirect(website + "?t=" + token);

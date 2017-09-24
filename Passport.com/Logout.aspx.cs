@@ -14,15 +14,10 @@ namespace Passport.com
         {
 
             //注销全局会话
-            if (Session["token"] != null)
+            if (Session["username"] != null)
             {
-                ConnectionMultiplexer RedisClient = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-
-                IDatabase db = RedisClient.GetDatabase();
-                //删除令牌Token
-                db.KeyDelete(Session["token"].ToString());
                 //清空sesson
-                Session["token"] = null;
+                Session["username"] = null;
             }
         }
     }
